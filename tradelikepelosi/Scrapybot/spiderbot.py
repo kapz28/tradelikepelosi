@@ -1,5 +1,5 @@
 import scrapy
-from Scrapybot.spiderbotconfig import SPIDER_NAME, SPIDER_DOMAIN, SPIDER_TARGET_URL, SPIDER_FEED_FORMAT, SPIDER_FEED_URI, SPIDER_USER_AGENT
+from Scrapybot.spiderbotconfig import SPIDER_NAME, SPIDER_DOMAIN, SPIDER_TARGET_URL, SPIDER_FEED_FORMAT, SPIDER_FEED_URI, SPIDER_USER_AGENT, TMP_FILE
 from scrapy.crawler import CrawlerProcess
 
 class SpiderBot(scrapy.Spider):
@@ -13,11 +13,14 @@ class SpiderBot(scrapy.Spider):
 
 class SpiderBotLauncher():
     def __init__(self) -> None:
-        self.process = CrawlerProcess({
-                'USER_AGENT': SPIDER_USER_AGENT, 
-                'FEED_FORMAT': SPIDER_FEED_FORMAT, 
-                'FEED_URI': SPIDER_FEED_URI,
-        })
+        print("\nWriting spider bot crawled data to:",SPIDER_FEED_URI,"\n")
+        self.process = CrawlerProcess(    
+            settings = {
+                'FEEDS':{
+                    SPIDER_FEED_URI:{'format': SPIDER_FEED_FORMAT, 'overwrite': True}
+                }
+            }
+        )
 
     def launch(self) -> None:
         self.process.crawl(SpiderBot)
