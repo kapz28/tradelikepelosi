@@ -1,1 +1,1 @@
-from tradelikepelosi.Scrapybot.spiderbot import SpiderBotLauncher
+from Scraper.scraper import Scraper
