@@ -1,0 +1,1 @@
+CHATGPT_API_KEY = "sk-proj-nTLAnta9JIhkBGluZrBPT3BlbkFJp6260K162EgJDDLlshcS"
