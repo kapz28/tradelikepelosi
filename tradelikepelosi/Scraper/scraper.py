@@ -60,7 +60,7 @@ class Scraper:
                     table_data.append(data)
         
         if print:
-            self.print_parsed_trades_raw_table(table_data=table_data)
+            self.print_parsed_pdf_trades_raw_table(table_data=table_data)
             
         organized_parsed_pdf_trades = None
         trades_pdf_files_list = None
@@ -70,7 +70,7 @@ class Scraper:
 
         return table_data, organized_parsed_pdf_trades, trades_pdf_files_list
             
-    def print_parsed_trades_raw_table(self,table_data):
+    def print_parsed_pdf_trades_raw_table(self,table_data):
         print("{:<30} {:<10} {:<15} {:<20}".format('Name', 'Office', 'Filing Year', 'File'))
         print("="*75)
         for data in table_data:
