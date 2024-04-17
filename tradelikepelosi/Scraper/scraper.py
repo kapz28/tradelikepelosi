@@ -84,7 +84,7 @@ class Scraper:
             pdf_file.write(response.content)
 
     # Function to parse text from a PDF file
-    def extract_trade_pdf_text(self,pdf_file_path = PDF_FILE_NAME):
+    def extract_trade_pdf_text(self,pdf_path = PDF_FILE_NAME):
         pdf_file_path = os.path.join(os.getcwd(),PDF_FILE_NAME)
         return self.read_pdf_with_fix(pdf_file=pdf_file_path)
     
@@ -169,7 +169,8 @@ class Scraper:
                     name = person
                     year = year
                     # Passing name, year, and pdf_path to the function
-                    print(name," ",year," ",pdf_path)
+                    self.download_trade_pdf(pdf_path)
+                    print("\n",self.extract_trade_pdf_text(pdf_path=pdf_path),"\n")
 
     
     
