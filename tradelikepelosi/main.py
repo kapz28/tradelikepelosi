@@ -48,7 +48,7 @@ class TradeLikePelosi:
         return trade_database
     
     def save_trade_database(self,trade_database:dict):
-        self.scraper.save_dict_to_json(trade_database,DATABASE)
+        self.scraper.save_dict_to_json_database(trade_database,DATABASE)
         return
 
         
