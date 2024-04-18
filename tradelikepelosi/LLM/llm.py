@@ -19,11 +19,15 @@ class ChatGPT:
             },
             {
             "role": "user",
-            "content": "There is a blob of text which contains different trades done by someone. Can you filter this out and give me a csv-like response with the name of the person who did the trade, the stock/asset they purchased (P) or sold (S) or exchanged (E), the ticker symbol associated with the stock on markets, the date they executed the trade, and the average amount as well (only one number)?"
+            "content": "There is a blob of text which contains different trades done by someone. Can you filter this out and give me a response with semi-colons seperating the data with the name of the person who did the trade, the date they executed the trade, the stock/asset name they purchased, and transaction type (P) or sold (S) or exchanged (E), the ticker symbol associated with the stock on markets, and the average amount as well (only one number)?"
             },
             {
             "role": "assistant",
             "content": "If you can't process a particular field for the text dump leave it as None"
+            },
+            {
+            "role": "assistant",
+            "content": "Seperate the different trades with new lines for example name 1, date executed 1, stock/asset name 1, transaction type 1, ticker 1, amount 1, newline, name 2, date executed 2, stock/asset name 2, transaction type 2, ticker 2, amount 2"
             },
             {
             "role": "assistant",
@@ -35,13 +39,16 @@ class ChatGPT:
             },
             {
             "role": "assistant",
-            "content": "keep the headers though and when providing response keep the ticker and asset/stock type seperate and keep transaction type",
+            "content": "keep the ticker and asset/stock type seperate and keep transaction type",
             },
             {
             "role": "assistant",
-            "content": "The headers should be name, ticker, stock/asset name, transaction type, date executred, amount",
+            "content": "The headers should be name, date executed, stock/asset name, transaction type, ticker, amount",
             },
-            
+            {
+            "role": "assistant",
+            "content": "For the amount data value if there is a range provided take the average of the two numbers and give one single number",
+            },     
         ],
         temperature=1,
         max_tokens=256,
@@ -50,5 +57,5 @@ class ChatGPT:
         presence_penalty=0
         )
     
-        print(response.choices[0].message.content)
+        # print(response.choices[0].message.content)
         return response.choices[0].message.content

@@ -156,13 +156,13 @@ class Scraper:
             
         return organized_pdf_data, list(pdf_files.keys())
             
-    def load_json_to_dict_database(self,json_file):
+    def load_json_to_dict_from_database(self,json_file):
         with open(self.format_to_database_path(json_file), "r") as infile:
             dictionary = json.load(infile)
 
         return dictionary
     
-    def save_dict_to_json_database(self,data_dict:dict, json_file=None):
+    def save_dict_to_json_into_database(self,data_dict:dict, json_file=None):
         with open(self.format_to_database_path(json_file), 'w') as outfile:
             json.dump(data_dict, outfile, indent=4)
     
@@ -181,10 +181,10 @@ class Scraper:
          return os.path.join(os.path.join(os.getcwd(),DATABASE_FOLDER_NAME),filename)
      
     def load_trades_pdf_politician_db_to_dict(self):
-        return self.load_json_to_dict_database(self.format_to_database_path(JSON_PDF_POLITCIAN_TRADES))
+        return self.load_json_to_dict_from_database(self.format_to_database_path(JSON_PDF_POLITCIAN_TRADES))
     
     def load_trades_politician_db_to_dict(self):
-        return self.load_json_to_dict_database(self.format_to_database_path(JSON_POLITCIAN_TRADES))
+        return self.load_json_to_dict_from_database(self.format_to_database_path(JSON_POLITCIAN_TRADES))
 
     
     
