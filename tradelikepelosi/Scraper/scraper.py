@@ -1,5 +1,6 @@
 import requests
-from Scraper.scraperconfig import TARGET_DATA,TARGET_ENDPOINT, TARGET_HEADERS, FILE_NAME, PDF_FILE_NAME, JSON_PDF_POLITCIAN_TRADES, JSON_PDF_KEYS_FILE_NAME, PDF_PREFIX_URL
+from Scraper.scraperconfig import TARGET_DATA,TARGET_ENDPOINT, TARGET_HEADERS,  PDF_PREFIX_URL
+from Database.databaseconfig import FILE_NAME, PDF_FILE_NAME, JSON_PDF_POLITCIAN_TRADES, JSON_PDF_KEYS_FILE_NAME, DATABASE_FOLDER_NAME, JSON_POLITCIAN_TRADES
 import re
 from bs4 import BeautifulSoup
 import os
@@ -29,13 +30,13 @@ class Scraper:
             formatted_content = re.sub(r"(</?[a-zA-Z]+)\s*>", r"\1>\n    ", response_content.decode("utf-8"))
 
             # Save the formatted content to a text file
-            with open(file_name, "w") as f:
+            with open(self.format_to_database_path(file_name), "w") as f:
                 f.write(formatted_content)
 
             print(f"Response content saved to {file_name}")
             
-    def load_trades_raw(self, file_path=os.path.join(os.getcwd(),FILE_NAME)):
-        with open(file_path, 'r') as file:
+    def load_trades_raw(self, file_name=FILE_NAME):
+        with open(self.format_to_database_path(file_name), 'r') as file:
             content = file.read()
         return BeautifulSoup(content, 'html.parser')
 
@@ -78,20 +79,20 @@ class Scraper:
         
             
     # Function to download PDF from a URL
-    def download_trade_pdf(self,url:str):
-        response = requests.get(PDF_PREFIX_URL+url)
-        with open(PDF_FILE_NAME, "wb") as pdf_file:
+    def download_trade_pdf(self,pdf_suffix_path:str):
+        response = requests.get(PDF_PREFIX_URL+pdf_suffix_path)
+        with open(self.format_to_database_path(PDF_FILE_NAME), "wb") as pdf_file:
             pdf_file.write(response.content)
 
     # Function to parse text from a PDF file
     def extract_trade_pdf_text(self,pdf_path = PDF_FILE_NAME):
-        pdf_file_path = os.path.join(os.getcwd(),PDF_FILE_NAME)
-        return self.read_pdf_with_fix(pdf_file=pdf_file_path)
+        pdf_file_path = self.format_to_database_path(pdf_path)
+        return self.read_pdf_with_fix(pdf_file_path=pdf_file_path)
     
-    def read_pdf_with_fix(self,pdf_file):
+    def read_pdf_with_fix(self,pdf_file_path):
         try:
             pdf_text = ""
-            with open(pdf_file, "rb") as file:
+            with open(pdf_file_path, "rb") as file:
                 pdf_reader = PyPDF2.PdfReader(file)
                 for page_num in range(len(pdf_reader.pages)):
                     page = pdf_reader.pages[page_num]
@@ -101,9 +102,9 @@ class Scraper:
             if "EOF marker not found" in str(e):
                 print(f"Error: {str(e)}. Attempting to fix the PDF file...")
                 try:
-                    self.fix_pdf(pdf_file)
+                    self.fix_pdf(pdf_file_path)
                     print("PDF file fixed. Trying to read the PDF file again...")
-                    return self.read_pdf_with_fix(pdf_file)
+                    return self.read_pdf_with_fix(pdf_file_path)
                 except Exception as e:
                     print(f"Error: {str(e)}. Unable to fix the PDF file.")
             else:
@@ -112,7 +113,7 @@ class Scraper:
 
     def fix_pdf(self,pdf_file):
         try:
-            with open(pdf_file, "a") as file:
+            with open(self.format_to_database_path(pdf_file), "a") as file:
                 file.write("%%EOF")
             print("PDF file fixed.")
         except Exception as e:
@@ -147,30 +148,45 @@ class Scraper:
             organized_pdf_data[name][year].append(file)
             pdf_files[file] = True
 
-        with open(output_file, "w") as outfile:
+        with open(self.format_to_database_path(output_file), "w") as outfile:
             json.dump(organized_pdf_data, outfile, indent=4, sort_keys=True)
 
-        with open(out_pdf_keys_file, "w") as pdf_outfile:
+        with open(self.format_to_database_path(out_pdf_keys_file), "w") as pdf_outfile:
             json.dump(list(pdf_files.keys()), pdf_outfile, indent=4, sort_keys=True)
             
         return organized_pdf_data, list(pdf_files.keys())
             
     def load_json_to_dict(self,json_file):
-        with open(json_file, "r") as infile:
+        with open(self.format_to_database_path(json_file), "r") as infile:
             dictionary = json.load(infile)
 
         return dictionary
     
-    def generate_all_processed_cleaned_trades_database(self,organized_pdf_trades:dict):
-        for person, years_data in organized_pdf_trades.items():
-            for year, pdf_list in years_data.items():
-                for pdf_path in pdf_list:
-                    # Extracting name and year from the loop variables
-                    name = person
-                    year = year
-                    # Passing name, year, and pdf_path to the function
-                    self.download_trade_pdf(pdf_path)
-                    print("\n",self.extract_trade_pdf_text(pdf_path=pdf_path),"\n")
+    def save_dict_to_json(self,data_dict:dict, json_file=None):
+        with open(self.format_to_database_path(json_file), 'w') as outfile:
+            print(self.format_to_database_path(json_file))
+            print(data_dict)
+            json.dump(data_dict, outfile, indent=4)
+    
+    # def generate_all_processed_cleaned_trades_database(self,organized_pdf_trades:dict = None):
+    #     for person, years_data in organized_pdf_trades.items():
+    #         for year, pdf_list in years_data.items():
+    #             for pdf_suffix_path in pdf_list:
+    #                 # Extracting name and year from the loop variables
+    #                 name = person
+    #                 year = year
+    #                 # Passing name, year, and pdf_path to the function
+    #                 self.download_trade_pdf(pdf_suffix_path)
+    #                 self.extract_trade_pdf_text()
+      
+    def format_to_database_path(self,filename:str ):              
+         return os.path.join(os.path.join(os.getcwd(),DATABASE_FOLDER_NAME),filename)
+     
+    def load_trades_pdf_politician_db_to_dict(self):
+        return self.load_json_to_dict(self.format_to_database_path(JSON_PDF_POLITCIAN_TRADES))
+    
+    def load_trades_politician_db_to_dict(self):
+        return self.load_json_to_dict(self.format_to_database_path(JSON_POLITCIAN_TRADES))
 
     
     
