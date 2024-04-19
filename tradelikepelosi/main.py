@@ -3,21 +3,24 @@ from LLM.llm import ChatGPT
 from Database.databaseconfig import DATABASE, JSON_PDF_POLITCIAN_TRADES, JSON_TRADE_KEYS_FILE_NAME
 import os
 from typing import List
+from datetime import datetime
+import copy
 class TradeLikePelosi:
     def __init__(self) -> None:
         self.scraper = Scraper()
         self.llm = ChatGPT()
         self.trader = None
         
-    def load_trade_line(self,trade_line : List[str],person:str ):
+    def load_trade_line(self,trade_line : List[str],person:str) -> dict:
         if len(trade_line) != 6 or None in trade_line or "None" in trade_line:
             return None
+        
         trade_dict = {
             "name": self.scraper.clean_and_filter_name(person).strip(),
             "ticker": trade_line[4].strip().upper(),
             "stock_name": trade_line[2].strip(),
             "transaction_type": trade_line[3].strip(),
-            "date_executed": trade_line[1].strip(),
+            "date_executed": self.scraper.make_date_format_consistent(trade_line[1].strip()),
             "amount": trade_line[5].strip().replace("$","").replace(",","")
         }
         
@@ -60,9 +63,8 @@ class TradeLikePelosi:
         self.scraper.save_dict_to_json_into_database(trade_database,DATABASE)
         return
     
-    def load_trade_database(self):
-        self.scraper.load_json_to_dict_from_database(DATABASE)
-        return
+    def load_trade_database(self) -> dict:
+        return self.scraper.load_json_to_dict_from_database(DATABASE)
     
     def detect_odd_database_entries(self,name, ticker, stock_name, transaction_type, date_executed, amount) -> bool:
         if name == None or stock_name == None or transaction_type == None or date_executed == None or amount ==None:
@@ -73,7 +75,7 @@ class TradeLikePelosi:
             return True
         if name == "n/a"  or stock_name == "n/a" or transaction_type == "n/a" or date_executed == "n/a" or amount =="n/a":
             return True
-        if "date" in str(date_executed).lower():
+        if "date" in str(date_executed).lower() or "not available" in str(date_executed).lower():
             return True
         
         
@@ -125,12 +127,45 @@ class TradeLikePelosi:
                         if pdf_suffix_path not in trades_keys:
                             trades_keys[pdf_suffix_path] = True
                             self.scraper.save_dict_to_json_into_database(trades_keys)
-                        
 
                         
-    def chumma(self) -> None:
-        DATABASE = self.load_trade_database()
-        pass
+    def parse_through_database(self) -> None:
+        db = self.load_trade_database()
+        db_copy = copy.deepcopy(db)
+        for politician, date_execution_orig in db_copy.items():
+            for date_execution, stock_name_orig in date_execution_orig.items():
+                for stock_name, trade_dict in stock_name_orig.items():
+                    ticker = trade_dict["ticker"]
+                    transaction_type = trade_dict["transaction_type"]
+                    amount = trade_dict["amount"]
+                    # print(politician)
+                    # print(date_execution)
+                    # print(ticker)
+                    # print(transaction_type)
+                    # print(amount)
+                    # This is extra just to play around filter and stuff post process
+                    # formatted_date_execution = self.make_date_format_consistent(date_execution)
+                    # print(formatted_date_execution)
+
+                    # if formatted_date_execution == None:
+                    #     if politician in db and date_execution in db[politician]:
+                    #         print(politician)
+                    #         print(date_execution)
+                    #         del db[politician][date_execution]
+                    # db[politician][formatted_date_execution] = dict(db[politician]).pop(date_execution)
+                    # try:
+                    #     print(db[politician][date_execution][stock_name]["ticker"])      
+                    #     db[politician][date_execution][stock_name]["ticker"] = str(db[politician][date_execution][stock_name]["ticker"]).upper()
+                        
+                    # except:
+                    #     print("PPEWAP")
+                    #     db[politician][date_execution][stock_name]["ticker"] = None
+                    # temp = db[politician][date_execution] 
+                    
+
+                    
+                    
+        self.save_trade_database(db)
         
         
          
@@ -140,13 +175,14 @@ class TradeLikePelosi:
 
 if __name__ == "__main__":  # pragma: no cover
     pelosi_bot = TradeLikePelosi()
+    # pelosi_bot.parse_through_database()
     # pelosi_bot.scraper.save_trades_raw()
     # _, organized_pdf_trades, pdf_files_list = pelosi_bot.scraper.parse_trades_raw(year_filter=None,print=True,save=True)
     # print(organized_pdf_trades)
     # print(pdf_files_list)
     # pelosi_bot.scraper.generate_all_processed_cleaned_trades_database(organized_pdf_trades)
     # pelosi_bot.process_one_trade_pdf_into_database(pdf_suffix_path="public_disc/ptr-pdfs/2023/20023192.pdf")
-    pelosi_bot.process_all_trades_in_pdf_politician_json_into_database()
+    # pelosi_bot.process_all_trades_in_pdf_politician_json_into_database()
     # pelosi_bot.scraper.download_trade_pdf(pdf_suffix_path="public_disc/ptr-pdfs/2023/20023192.pdf")
     # print("\n",pelosi_bot.scraper.extract_trade_pdf_text(),"\n")
     # pelosi_bot.llm.process_text_dump_trade(text_dump=pelosi_bot.scraper.extract_trade_pdf_text()) 

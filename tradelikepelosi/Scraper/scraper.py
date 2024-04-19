@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import os
 import PyPDF2
 import json
+from datetime import datetime
 
 class Scraper:
     def __init__(self, url=TARGET_ENDPOINT, headers=TARGET_HEADERS, data=TARGET_DATA, year=None):
@@ -156,7 +157,7 @@ class Scraper:
             
         return organized_pdf_data, list(pdf_files.keys())
             
-    def load_json_to_dict_from_database(self,json_file):
+    def load_json_to_dict_from_database(self,json_file) -> dict:
         with open(self.format_to_database_path(json_file), "r") as infile:
             dictionary = json.load(infile)
 
@@ -180,11 +181,56 @@ class Scraper:
     def format_to_database_path(self,filename:str ):              
          return os.path.join(os.path.join(os.getcwd(),DATABASE_FOLDER_NAME),filename)
      
-    def load_trades_pdf_politician_db_to_dict(self):
+    def load_trades_pdf_politician_db_to_dict(self) -> dict:
         return self.load_json_to_dict_from_database(self.format_to_database_path(JSON_PDF_POLITCIAN_TRADES))
     
-    def load_trades_politician_db_to_dict(self):
+    def load_trades_politician_db_to_dict(self) -> dict:
         return self.load_json_to_dict_from_database(self.format_to_database_path(JSON_POLITCIAN_TRADES))
+    
+    def make_date_format_consistent(self,date_str:str) -> None:
+        date_str = date_str.strip()
+        date_str = date_str.replace("*","")
+        try:
+            date_obj = datetime.strptime(date_str, "%B %d, %Y")
+            return date_obj.strftime("%m/%d/%Y")
+        except ValueError:
+            try:
+                date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+                return date_obj.strftime("%m/%d/%Y")
+            except ValueError:
+                try:
+                    date_obj = datetime.strptime(date_str, "%m/%d/%Y")
+                    return date_obj.strftime("%m/%d/%Y")
+                except ValueError:
+                    try:
+                        date_obj = datetime.strptime(date_str, "%m-%d-%Y")
+                        return date_obj.strftime("%m/%d/%Y")
+                    except ValueError:
+                        try:
+                            date_obj = datetime.strptime(date_str, "%b %d,%Y")
+                            return date_obj.strftime("%m/%d/%Y")
+                        except ValueError:
+                            try:
+                                date_obj = datetime.strptime(date_str, "%b %d, %Y")
+                                return date_obj.strftime("%m/%d/%Y")
+                            except ValueError:
+                                try:
+                                    date_obj = datetime.strptime(date_str, "%B %d, %Y")
+                                    return date_obj.strftime("%m/%d/%Y")
+                                except ValueError:
+                                    try:
+                                        date_obj = datetime.strptime(date_str, "%m/%d/%y")
+                                        return date_obj.strftime("%m/%d/%Y")
+                                    except ValueError:
+                                        try:
+                                            temp = date_str.split(" ")
+                                            if len(temp) > 3:
+                                                temp = temp[:3]
+                                            temp = " ".join(temp)
+                                            date_obj = datetime.strptime(temp, "%b %d %Y")
+                                            return date_obj.strftime("%m/%d/%Y")
+                                        except ValueError:
+                                            return None
 
     
     
