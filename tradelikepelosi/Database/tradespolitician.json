@@ -72368,6 +72368,11 @@
                 "ticker": "AAPL",
                 "transaction_type": "P",
                 "amount": "100"
+            },
+            "Tesla Inc": {
+                "ticker": "TSLA",
+                "transaction_type": "P",
+                "amount": "5000"
             }
         },
         "2022-01-16": {
@@ -72648,6 +72653,60 @@
                 "ticker": "BA",
                 "transaction_type": "S",
                 "amount": "32500"
+            }
+        },
+        "2022-01-05": {
+            "Apple Inc": {
+                "ticker": "AAPL",
+                "transaction_type": "P",
+                "amount": "10000"
+            }
+        },
+        "2022-01-10": {
+            "Amazon.com Inc": {
+                "ticker": "AMZN",
+                "transaction_type": "S",
+                "amount": "7500"
+            },
+            "Tesla Inc": {
+                "ticker": "TSLA",
+                "transaction_type": "S",
+                "amount": "50"
+            }
+        },
+        "2023-05-12": {
+            "Company A": {
+                "ticker": "ABC",
+                "transaction_type": "P",
+                "amount": "1000"
+            }
+        },
+        "2023-05-14": {
+            "Company B": {
+                "ticker": "XYZ",
+                "transaction_type": "S",
+                "amount": "500"
+            }
+        },
+        "2023-05-16": {
+            "Company C": {
+                "ticker": "QRS",
+                "transaction_type": "E",
+                "amount": "750"
+            }
+        },
+        "2022-01-06": {
+            "Tesla Inc": {
+                "ticker": "TSLA",
+                "transaction_type": "S",
+                "amount": "500"
+            }
+        },
+        "2022-02-15": {
+            "Microsoft Corporation": {
+                "ticker": "MSFT",
+                "transaction_type": "E",
+                "amount": "75"
             }
         }
     },

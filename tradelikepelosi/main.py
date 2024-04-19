@@ -1,6 +1,6 @@
 from Scraper.scraper import Scraper
 from LLM.llm import ChatGPT
-from Database.databaseconfig import DATABASE, JSON_PDF_POLITCIAN_TRADES
+from Database.databaseconfig import DATABASE, JSON_PDF_POLITCIAN_TRADES, JSON_TRADE_KEYS_FILE_NAME
 import os
 from typing import List
 class TradeLikePelosi:
@@ -14,7 +14,7 @@ class TradeLikePelosi:
             return None
         trade_dict = {
             "name": self.scraper.clean_and_filter_name(person).strip(),
-            "ticker": trade_line[4].strip(),
+            "ticker": trade_line[4].strip().upper(),
             "stock_name": trade_line[2].strip(),
             "transaction_type": trade_line[3].strip(),
             "date_executed": trade_line[1].strip(),
@@ -58,6 +58,10 @@ class TradeLikePelosi:
     
     def save_trade_database(self,trade_database:dict):
         self.scraper.save_dict_to_json_into_database(trade_database,DATABASE)
+        return
+    
+    def load_trade_database(self):
+        self.scraper.load_json_to_dict_from_database(DATABASE)
         return
     
     def detect_odd_database_entries(self,name, ticker, stock_name, transaction_type, date_executed, amount) -> bool:
@@ -107,15 +111,27 @@ class TradeLikePelosi:
         
     def process_all_trades_in_pdf_politician_json_into_database(self) -> None:
         organized_pdf_trades = self.scraper.load_json_to_dict_from_database(JSON_PDF_POLITCIAN_TRADES)
+        trades_keys = self.scraper.load_json_to_dict_from_database(JSON_TRADE_KEYS_FILE_NAME)
         trigger = False
         for person, years_data in organized_pdf_trades.items():
             if person == "engel eliot":
                 trigger = True
+
             if trigger:
                 for year, pdf_list in years_data.items():
                     for pdf_suffix_path in pdf_list:
                         print("Processing the following pdf trade: "+pdf_suffix_path)
                         self.process_one_trade_pdf_into_database(pdf_suffix_path=pdf_suffix_path,person=person)
+                        if pdf_suffix_path not in trades_keys:
+                            trades_keys[pdf_suffix_path] = True
+                            self.scraper.save_dict_to_json_into_database(trades_keys)
+                        
+
+                        
+    def chumma(self) -> None:
+        DATABASE = self.load_trade_database()
+        pass
+        
         
          
         
