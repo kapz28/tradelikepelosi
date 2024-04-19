@@ -117,7 +117,7 @@ class TradeLikePelosi:
         trades_keys = self.scraper.load_json_to_dict_from_database(JSON_TRADE_KEYS_FILE_NAME)
         trigger = False
         for person, years_data in organized_pdf_trades.items():
-            if person == "engel eliot":
+            if person == "johnson henry hank jr":
                 trigger = True
             if trigger:
                 for year, pdf_list in years_data.items():
