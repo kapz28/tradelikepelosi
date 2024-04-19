@@ -130885,6 +130885,460 @@
                 "transaction_type": "E",
                 "amount": "50"
             }
+        },
+        "01/05/2021": {
+            "Apple": {
+                "ticker": "AAPL",
+                "transaction_type": "P",
+                "amount": "100"
+            }
+        },
+        "02/10/2021": {
+            "Tesla": {
+                "ticker": "TSLA",
+                "transaction_type": "S",
+                "amount": "75"
+            }
+        },
+        "03/15/2021": {
+            "Amazon": {
+                "ticker": "AMZN",
+                "transaction_type": "E",
+                "amount": "50"
+            }
+        },
+        "01/15/2022": {
+            "Amazon": {
+                "ticker": "AMZN",
+                "transaction_type": "B",
+                "amount": "1500"
+            },
+            "Tesla Inc": {
+                "ticker": "TSLA",
+                "transaction_type": "P",
+                "amount": "600"
+            },
+            "Apple Inc": {
+                "ticker": "AAPL",
+                "transaction_type": "P",
+                "amount": "1000"
+            },
+            "Apple Inc.": {
+                "ticker": "AAPL",
+                "transaction_type": "P",
+                "amount": "500"
+            }
+        },
+        "02/28/2022": {
+            "Apple": {
+                "ticker": "AAPL",
+                "transaction_type": "P",
+                "amount": "500"
+            }
+        },
+        "03/10/2022": {
+            "Tesla": {
+                "ticker": "TSLA",
+                "transaction_type": "S",
+                "amount": "800"
+            }
+        },
+        "01/05/2022": {
+            "Apple Inc": {
+                "ticker": "AAPL",
+                "transaction_type": "P",
+                "amount": "1000"
+            },
+            "Company A": {
+                "ticker": "ABCD",
+                "transaction_type": "P",
+                "amount": "2000"
+            }
+        },
+        "01/07/2022": {
+            "Microsoft Corporation": {
+                "ticker": "MSFT",
+                "transaction_type": "S",
+                "amount": "750"
+            },
+            "Amazon.com Inc": {
+                "ticker": "AMZN",
+                "transaction_type": "E",
+                "amount": "750"
+            }
+        },
+        "01/10/2022": {
+            "Amazon.com Inc": {
+                "ticker": "AMZN",
+                "transaction_type": "E",
+                "amount": "500"
+            },
+            "Company B": {
+                "ticker": "XYZ",
+                "transaction_type": "S",
+                "amount": "5000"
+            }
+        },
+        "01/20/2022": {
+            "Microsoft Corporation": {
+                "ticker": "MSFT",
+                "transaction_type": "S",
+                "amount": "500"
+            }
+        },
+        "01/25/2022": {
+            "Tesla Inc": {
+                "ticker": "TSLA",
+                "transaction_type": "P",
+                "amount": "750"
+            }
+        },
+        "01/16/2022": {
+            "Tesla Inc.": {
+                "ticker": "TSLA",
+                "transaction_type": "S",
+                "amount": "300"
+            }
+        },
+        "01/17/2022": {
+            "Microsoft Corporation": {
+                "ticker": "MSFT",
+                "transaction_type": "E",
+                "amount": "700"
+            }
+        },
+        "01/06/2022": {
+            "Tesla Inc": {
+                "ticker": "TSLA",
+                "transaction_type": "S",
+                "amount": "500"
+            }
+        },
+        "02/10/2022": {
+            "Tesla Inc.": {
+                "ticker": "TSLA",
+                "transaction_type": "S",
+                "amount": "75"
+            }
+        },
+        "03/05/2022": {
+            "Amazon.com Inc.": {
+                "ticker": "AMZN",
+                "transaction_type": "E",
+                "amount": "50"
+            }
+        },
+        "10/25/2022": {
+            "Apple": {
+                "ticker": "AAPL",
+                "transaction_type": "P",
+                "amount": "1500"
+            }
+        },
+        "10/26/2022": {
+            "Microsoft": {
+                "ticker": "MSFT",
+                "transaction_type": "S",
+                "amount": "2000"
+            }
+        },
+        "10/27/2022": {
+            "Amazon": {
+                "ticker": "AMZN",
+                "transaction_type": "E",
+                "amount": "2500"
+            }
+        },
+        "01/15/2023": {
+            "Apple": {
+                "ticker": "AAPL",
+                "transaction_type": "P",
+                "amount": "1000"
+            }
+        },
+        "02/28/2023": {
+            "Tesla": {
+                "ticker": "TSLA",
+                "transaction_type": "S",
+                "amount": "500"
+            }
+        },
+        "03/10/2023": {
+            "Microsoft": {
+                "ticker": "MSFT",
+                "transaction_type": "E",
+                "amount": "750"
+            }
+        },
+        "05/12/2023": {
+            "Apple Inc": {
+                "ticker": "AAPL",
+                "transaction_type": "S",
+                "amount": "500"
+            }
+        },
+        "05/13/2023": {
+            "Google": {
+                "ticker": "GOOGL",
+                "transaction_type": "P",
+                "amount": "300"
+            }
+        },
+        "05/14/2023": {
+            "Tesla Inc": {
+                "ticker": "TSLA",
+                "transaction_type": "E",
+                "amount": "1000"
+            }
+        },
+        "02/15/2022": {
+            "Company C": {
+                "ticker": "WXYZ",
+                "transaction_type": "E",
+                "amount": "10000"
+            }
+        },
+        "08/10/2021": {
+            "DeKalb County, GA Pension": {
+                "ticker": "NONE",
+                "transaction_type": "Purchase",
+                "amount": "32500.5"
+            }
+        },
+        "05/15/2023": {
+            "DeKalb County, GA Pension": {
+                "ticker": "PE",
+                "transaction_type": "P",
+                "amount": "33500.50"
+            }
+        }
+    },
+    "johnson james michael": {
+        "08/10/2017": {
+            "MAINSTAY RETIRE 2030 FD INVESTOR CLASS": {
+                "ticker": "",
+                "transaction_type": "S",
+                "amount": "8000"
+            }
+        },
+        "08/15/2022": {
+            "Apple Inc": {
+                "ticker": "AAPL",
+                "transaction_type": "P",
+                "amount": "100"
+            }
+        },
+        "08/16/2022": {
+            "Tesla Inc": {
+                "ticker": "TSLA",
+                "transaction_type": "S",
+                "amount": "75"
+            },
+            "Amazon": {
+                "ticker": "AMZN",
+                "transaction_type": "P",
+                "amount": "50"
+            }
+        },
+        "08/13/2019": {
+            "Attorney fee award": {
+                "ticker": "DO",
+                "transaction_type": "S",
+                "amount": "8000"
+            },
+            "Thrift Savings Plan": {
+                "ticker": "IH",
+                "transaction_type": "P",
+                "amount": "8000"
+            },
+            "Liberty University, Inc.": {
+                "ticker": "NONE",
+                "transaction_type": "P",
+                "amount": "11800"
+            }
+        }
+    },
+    "johnson sam": {
+        "01/10/2022": {
+            "Company B": {
+                "ticker": "BBB",
+                "transaction_type": "S",
+                "amount": "500"
+            }
+        },
+        "02/15/2022": {
+            "Company C": {
+                "ticker": "CCC",
+                "transaction_type": "E",
+                "amount": "750"
+            }
+        },
+        "01/15/2022": {
+            "Tesla": {
+                "ticker": "TSLA",
+                "transaction_type": "P",
+                "amount": "500"
+            }
+        },
+        "02/20/2022": {
+            "Apple": {
+                "ticker": "AAPL",
+                "transaction_type": "S",
+                "amount": "300"
+            }
+        },
+        "03/05/2022": {
+            "Microsoft": {
+                "ticker": "MSFT",
+                "transaction_type": "P",
+                "amount": "400"
+            }
+        },
+        "08/10/2021": {
+            "Apple Inc": {
+                "ticker": "AAPL",
+                "transaction_type": "P",
+                "amount": "5000"
+            }
+        },
+        "07/15/2021": {
+            "Microsoft Corporation": {
+                "ticker": "MSFT",
+                "transaction_type": "S",
+                "amount": "3000"
+            }
+        },
+        "09/05/2021": {
+            "Tesla Inc": {
+                "ticker": "TSLA",
+                "transaction_type": "E",
+                "amount": "7000"
+            }
+        },
+        "05/17/2017": {
+            "Congressional Federal Credit Union": {
+                "ticker": "GFEDC",
+                "transaction_type": "S",
+                "amount": "100"
+            },
+            "Franklin Gold": {
+                "ticker": "GFEDC",
+                "transaction_type": "S",
+                "amount": "17500"
+            },
+            "Legacy Bank": {
+                "ticker": "GFEDC",
+                "transaction_type": "S",
+                "amount": "8008"
+            }
+        },
+        "05/09/2014": {
+            "Congressional Federal Credit Union": {
+                "ticker": "GFEDC",
+                "transaction_type": "P",
+                "amount": "100500"
+            },
+            "Franklin Gold": {
+                "ticker": "GFEDC",
+                "transaction_type": "P",
+                "amount": "32500"
+            },
+            "Legacy Bank": {
+                "ticker": "GFEDC",
+                "transaction_type": "P",
+                "amount": "8500"
+            }
+        },
+        "04/28/2015": {
+            "Congressional Federal Credit Union": {
+                "ticker": "GFEDC",
+                "transaction_type": "S",
+                "amount": "100.50"
+            },
+            "Franklin Gold": {
+                "ticker": "GFEDC",
+                "transaction_type": "S",
+                "amount": "1750.50"
+            },
+            "Legacy Bank": {
+                "ticker": "GFEDC",
+                "transaction_type": "S",
+                "amount": "7510.50"
+            }
+        },
+        "04/15/2016": {
+            "Congressional Federal Credit Union": {
+                "ticker": "NONE",
+                "transaction_type": "S",
+                "amount": "100.50"
+            },
+            "Franklin Gold": {
+                "ticker": "NONE",
+                "transaction_type": "S",
+                "amount": "1750.50"
+            },
+            "Legacy Bank": {
+                "ticker": "NONE",
+                "transaction_type": "S",
+                "amount": "8500.50"
+            }
+        },
+        "04/05/2017": {
+            "Congressional Federal Credit Union": {
+                "ticker": "GFEDC",
+                "transaction_type": "S",
+                "amount": "10000"
+            },
+            "Franklin Gold": {
+                "ticker": "GFEDC",
+                "transaction_type": "S",
+                "amount": "32500"
+            },
+            "Legacy Bank": {
+                "ticker": "GFEDC",
+                "transaction_type": "S",
+                "amount": "8000"
+            }
+        },
+        "04/16/2018": {
+            "Congressional Federal Credit Union": {
+                "ticker": "GFEDC",
+                "transaction_type": "P",
+                "amount": "10850"
+            },
+            "Franklin Gold": {
+                "ticker": "GFEDC",
+                "transaction_type": "S",
+                "amount": "500"
+            },
+            "Legacy Bank": {
+                "ticker": "GFEDC",
+                "transaction_type": "P",
+                "amount": "8000"
+            }
+        }
+    },
+    "johnson timothy": {
+        "05/10/2022": {
+            "Apple Inc": {
+                "ticker": "AAPL",
+                "transaction_type": "S",
+                "amount": "100"
+            }
+        },
+        "05/12/2022": {
+            "Tesla Inc": {
+                "ticker": "TSLA",
+                "transaction_type": "P",
+                "amount": "50"
+            }
+        },
+        "05/15/2022": {
+            "Amazon.com Inc": {
+                "ticker": "AMZN",
+                "transaction_type": "E",
+                "amount": "75"
+            }
         }
     }
 }

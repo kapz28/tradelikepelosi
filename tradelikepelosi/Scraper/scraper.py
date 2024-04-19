@@ -78,18 +78,7 @@ class Scraper:
 
     # Function to parse text from a PDF file
     def extract_trade_pdf_text(self):
-        return self.read_pdf_with_fix()
-    
-    def read_pdf(self,pdf_reader,pdf_text:str):
-        for page_num in range(len(pdf_reader.pages)):
-            page = pdf_reader.pages[page_num]
-            pdf_text += page.extract_text()
-        return pdf_text
-    
-    def read_pdf_with_fix(self):
-        pdf_text = ""
-        pdf_reader = _Database.load_trade_pdf()
-        return self.read_pdf(pdf_reader,pdf_text)
+        return _Database.load_trade_pdf()
     
     def clean_and_filter_name(self,name):        
         name = str(re.sub('[^a-zA-Z]+', ' ', name)).lower()

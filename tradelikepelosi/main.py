@@ -25,7 +25,7 @@ class TradeLikePelosi:
         }
         
         for key in trade_dict:
-            if ":" in trade_dict[key]:
+            if type(trade_dict[key]) != None and type(trade_dict[key]) == str and ":" in trade_dict[key]:
                 chumma = trade_dict[key].split(":")
                 print(chumma)
                 trade_dict[key] = chumma[-1].strip()
@@ -61,7 +61,7 @@ class TradeLikePelosi:
 
         
     def process_one_trade_pdf_into_database(self, pdf_suffix_path : str,person:str) -> None:
-        db = self.database.load_trades_politician_db_to_dict()
+        db = self.database.load_trade_database()
         self.scraper.download_trade_pdf(pdf_suffix_path=pdf_suffix_path)
         try:
             trade_processed_result = self.llm.process_text_dump_trade(text_dump=self.scraper.extract_trade_pdf_text())
@@ -144,7 +144,7 @@ class TradeLikePelosi:
         self.scraper.save_trades_raw(self.scraper.retreive_trades_raw())
         parsed_trades_raw_table_data = self.scraper.parse_trades_raw(self.scraper.load_trades_raw(),print=True)
         existing_organized_pdf_data_database, _ = self.scraper.sift_parsed_pdf_trades_raw_data_and_update_higher_level_database(parsed_trades_raw_table_data)
-        # self.process_all_trades_in_pdf_politician_json_into_database(existing_organized_pdf_data_database,force_refresh=True)            
+        self.process_all_trades_in_pdf_politician_json_into_database(existing_organized_pdf_data_database,force_refresh=True)            
         
         
         

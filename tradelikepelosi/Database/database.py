@@ -29,21 +29,30 @@ class _Database:
         return BeautifulSoup(content, 'html.parser')
     
     @staticmethod     
-    def load_trade_pdf():
+    def load_trade_pdf() -> str:
         try:
             with open(_Database.format_to_database_path(PDF_FILE_NAME), "rb") as file:
+                pdf_text = ""
                 pdf_reader = PyPDF2.PdfReader(file)
-                return pdf_reader
+                return _Database.read_pdf(pdf_reader,pdf_text)
         except PyPDF2.errors.PdfReadError as e:
             if "EOF marker not found" in str(e):
                 print(f"Error: {str(e)}. Attempting to fix the PDF file...")
                 try:
                     _Database.write_fix_to_pdf()
                     with open(_Database.format_to_database_path(PDF_FILE_NAME), "rb") as file:
+                        pdf_text = ""
                         pdf_reader = PyPDF2.PdfReader(file)
-                        return pdf_reader
+                        return _Database.read_pdf(pdf_reader,pdf_text)
                 except Exception as e:
                     print(f"Error: {str(e)}. Unable to fix the PDF file.")
+                 
+    @staticmethod
+    def read_pdf(pdf_reader,pdf_text:str):
+        for page_num in range(len(pdf_reader.pages)):
+            page = pdf_reader.pages[page_num]
+            pdf_text += page.extract_text()
+        return pdf_text
             
             
 
