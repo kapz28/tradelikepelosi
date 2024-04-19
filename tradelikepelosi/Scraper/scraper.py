@@ -15,16 +15,25 @@ class Scraper:
         self.data = data
         self.year = year
 
-    def retreive_trades_raw(self):
+    def retreive_trades_raw(self, year=None, lastname=None,state=None,district=None):
+        if year:
+            self.data["FilingYear"] = year
+        if lastname:
+            self.data["LastName"] = lastname
+        if state:
+            self.data["State"] = state
+        if district:
+            self.data["District"] = district            
+    
         response = requests.post(self.url, headers=self.headers, data=self.data)
 
         if response.status_code == 200:
             return response.content
         else:
             print(f"Error: {response.status_code}")
+            return None
             
-    def save_trades_raw(self, file_name=FILE_NAME):
-        response_content = self.retreive_trades_raw()
+    def save_trades_raw(self,response_content,file_name=FILE_NAME):
 
         if response_content:
             # Add line breaks and indentation to the HTML tags
@@ -41,8 +50,7 @@ class Scraper:
             content = file.read()
         return BeautifulSoup(content, 'html.parser')
 
-    def parse_trades_raw(self, year_filter: int = None, print=False, save=False):
-        html_content = self.load_trades_raw()
+    def parse_trades_raw(self, html_content, print=False, year_filter: int = None):
         rows = html_content.find_all('tr')
         table_data = []
 
@@ -63,14 +71,8 @@ class Scraper:
         
         if print:
             self.print_parsed_pdf_trades_raw_table(table_data=table_data)
-            
-        organized_parsed_pdf_trades = None
-        trades_pdf_files_list = None
-            
-        if save:
-            organized_parsed_pdf_trades, trades_pdf_files_list = self.organize_and_save_parsed_pdf_trades_raw_data(table_data)
 
-        return table_data, organized_parsed_pdf_trades, trades_pdf_files_list
+        return table_data
             
     def print_parsed_pdf_trades_raw_table(self,table_data):
         print("{:<30} {:<10} {:<15} {:<20}".format('Name', 'Office', 'Filing Year', 'File'))
@@ -130,63 +132,63 @@ class Scraper:
         name = ' '.join( [namesub for namesub in name.split() if len(namesub)>1] )
         return name 
     
-    def organize_and_save_parsed_pdf_trades_raw_data(self, data_list, output_file=JSON_PDF_POLITCIAN_TRADES, out_pdf_keys_file=JSON_PDF_KEYS_FILE_NAME):
-        organized_pdf_data = {}
-        pdf_files = {}
-
-        for item in data_list:
+    def sift_parsed_pdf_trades_raw_data_and_update_higher_level_database(self, parsed_trades_raw_table_data):
+        existing_pdf_files_keys_database = self.load_trades_pdf_keys_politician_db_to_dict()
+        existing_organized_pdf_data_database = self.load_trades_pdf_politician_db_to_dict()
+        
+        for item in parsed_trades_raw_table_data:
             year = int(os.path.basename(os.path.dirname(item["file"])))
             name = self.clean_and_filter_name(name=item["name"])
             file = item["file"]
-
-            if name not in organized_pdf_data:
-                organized_pdf_data[name] = {}
-
-            if year not in organized_pdf_data[name]:
-                organized_pdf_data[name][year] = []
-
-
-            organized_pdf_data[name][year].append(file)
-            pdf_files[file] = True
-
-        with open(self.format_to_database_path(output_file), "w") as outfile:
-            json.dump(organized_pdf_data, outfile, indent=4, sort_keys=True)
-
-        with open(self.format_to_database_path(out_pdf_keys_file), "w") as pdf_outfile:
-            json.dump(list(pdf_files.keys()), pdf_outfile, indent=4, sort_keys=True)
             
-        return organized_pdf_data, list(pdf_files.keys())
+            print(year)
+            print(name)
+            print(file)
+
+            if name not in existing_organized_pdf_data_database:
+                existing_organized_pdf_data_database[name] = {}
+
+            if year not in existing_organized_pdf_data_database[name]:
+                existing_organized_pdf_data_database[name][year] = []
+
+
+            existing_organized_pdf_data_database[name][year].append(file)
+            if file not in existing_pdf_files_keys_database:
+                existing_pdf_files_keys_database[file] = True
+
+        self.save_trades_pdf_keys_politician_dict_to_db(existing_pdf_files_keys_database)
+        self.save_trades_pdf_politician_dict_to_db(existing_organized_pdf_data_database)
+
+        return existing_organized_pdf_data_database, existing_pdf_files_keys_database
+    
+    def format_to_database_path(self,filename:str ):              
+         return os.path.join(os.path.join(os.getcwd(),DATABASE_FOLDER_NAME),filename)
             
     def load_json_to_dict_from_database(self,json_file) -> dict:
         with open(self.format_to_database_path(json_file), "r") as infile:
             dictionary = json.load(infile)
 
         return dictionary
-    
-    def save_dict_to_json_into_database(self,data_dict:dict, json_file=None):
-        with open(self.format_to_database_path(json_file), 'w') as outfile:
-            json.dump(data_dict, outfile, indent=4)
-    
-    # def generate_all_processed_cleaned_trades_database(self,organized_pdf_trades:dict = None):
-    #     for person, years_data in organized_pdf_trades.items():
-    #         for year, pdf_list in years_data.items():
-    #             for pdf_suffix_path in pdf_list:
-    #                 # Extracting name and year from the loop variables
-    #                 name = person
-    #                 year = year
-    #                 # Passing name, year, and pdf_path to the function
-    #                 self.download_trade_pdf(pdf_suffix_path)
-    #                 self.extract_trade_pdf_text()
-      
-    def format_to_database_path(self,filename:str ):              
-         return os.path.join(os.path.join(os.getcwd(),DATABASE_FOLDER_NAME),filename)
-     
     def load_trades_pdf_politician_db_to_dict(self) -> dict:
         return self.load_json_to_dict_from_database(self.format_to_database_path(JSON_PDF_POLITCIAN_TRADES))
+    
+    def load_trades_pdf_keys_politician_db_to_dict(self) -> dict:
+        return self.load_json_to_dict_from_database(self.format_to_database_path(JSON_PDF_KEYS_FILE_NAME))
     
     def load_trades_politician_db_to_dict(self) -> dict:
         return self.load_json_to_dict_from_database(self.format_to_database_path(JSON_POLITCIAN_TRADES))
     
+    def save_dict_to_json_into_database(self,data_dict:dict, json_file=None):
+        with open(self.format_to_database_path(json_file), 'w') as outfile:
+            json.dump(data_dict, outfile, indent=4)
+            
+    def save_trades_pdf_politician_dict_to_db(self,data_dict) -> dict:
+        self.save_dict_to_json_into_database(data_dict,JSON_PDF_POLITCIAN_TRADES)
+    
+    def save_trades_pdf_keys_politician_dict_to_db(self,data_dict) -> dict:
+        self.save_dict_to_json_into_database(data_dict,JSON_PDF_KEYS_FILE_NAME)
+      
+ 
     def make_date_format_consistent(self,date_str:str) -> None:
         date_str = date_str.strip()
         date_str = date_str.replace("*","")

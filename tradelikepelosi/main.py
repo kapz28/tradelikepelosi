@@ -111,24 +111,24 @@ class TradeLikePelosi:
             print(f"No Trades detected in this file.")
             return
         
-    def process_all_trades_in_pdf_politician_json_into_database(self) -> None:
-        organized_pdf_trades = self.scraper.load_json_to_dict_from_database(JSON_PDF_POLITCIAN_TRADES)
+    def process_all_trades_in_pdf_politician_json_into_database(self,organized_pdf_trades=None,force_refresh=False) -> None:
+        if organized_pdf_trades == None:
+            organized_pdf_trades = self.scraper.load_json_to_dict_from_database(JSON_PDF_POLITCIAN_TRADES)
         trades_keys = self.scraper.load_json_to_dict_from_database(JSON_TRADE_KEYS_FILE_NAME)
         trigger = False
         for person, years_data in organized_pdf_trades.items():
             if person == "engel eliot":
                 trigger = True
-
             if trigger:
                 for year, pdf_list in years_data.items():
                     for pdf_suffix_path in pdf_list:
                         print("Processing the following pdf trade: "+pdf_suffix_path)
-                        self.process_one_trade_pdf_into_database(pdf_suffix_path=pdf_suffix_path,person=person)
-                        if pdf_suffix_path not in trades_keys:
+                        if pdf_suffix_path not in trades_keys or force_refresh:
+                            self.process_one_trade_pdf_into_database(pdf_suffix_path=pdf_suffix_path,person=person)
                             trades_keys[pdf_suffix_path] = True
-                            self.scraper.save_dict_to_json_into_database(trades_keys)
+                            self.scraper.save_dict_to_json_into_database(trades_keys,JSON_TRADE_KEYS_FILE_NAME)
 
-                        
+        
     def parse_through_database(self) -> None:
         db = self.load_trade_database()
         db_copy = copy.deepcopy(db)
@@ -160,12 +160,14 @@ class TradeLikePelosi:
                     # except:
                     #     print("PPEWAP")
                     #     db[politician][date_execution][stock_name]["ticker"] = None
-                    # temp = db[politician][date_execution] 
+                    # temp = db[politician][date_execution]
                     
-
-                    
-                    
-        self.save_trade_database(db)
+    def pull_all_trades_and_update_database(self) -> None:
+        self.scraper.save_trades_raw(self.scraper.retreive_trades_raw(year=2024))
+        parsed_trades_raw_table_data = self.scraper.parse_trades_raw(self.scraper.load_trades_raw(),print=True)
+        existing_organized_pdf_data_database, _ = self.scraper.sift_parsed_pdf_trades_raw_data_and_update_higher_level_database(parsed_trades_raw_table_data)
+        # self.process_all_trades_in_pdf_politician_json_into_database(existing_organized_pdf_data_database,force_refresh=True)            
+        
         
         
          
@@ -175,6 +177,7 @@ class TradeLikePelosi:
 
 if __name__ == "__main__":  # pragma: no cover
     pelosi_bot = TradeLikePelosi()
+    pelosi_bot.pull_all_trades_and_update_database()
     # pelosi_bot.parse_through_database()
     # pelosi_bot.scraper.save_trades_raw()
     # _, organized_pdf_trades, pdf_files_list = pelosi_bot.scraper.parse_trades_raw(year_filter=None,print=True,save=True)
