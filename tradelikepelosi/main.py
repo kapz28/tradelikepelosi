@@ -95,7 +95,7 @@ class TradeLikePelosi:
         trades_keys = self.database.load_trades_politician_keys_db_to_dict()
         trigger = False
         for person, years_data in organized_pdf_trades.items():
-            if person == "johnson henry hank jr":
+            if person == "steil bryan george":
                 trigger = True
             if trigger:
                 for year, pdf_list in years_data.items():
