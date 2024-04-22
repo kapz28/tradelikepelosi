@@ -1,6 +1,7 @@
 from Database.database import _Database
 from LLM.llm import ChatGPT
 from Scraper.scraper import Scraper
+from Trader.trader import Trader
 
 from typing import List
 import copy
@@ -9,59 +10,10 @@ class TradeLikePelosi:
         self.database= _Database
         self.llm = ChatGPT()
         self.scraper = Scraper()
-        self.trader = None
-        
-    def load_trade_line(self,trade_line : List[str],person:str) -> dict:
-        if len(trade_line) != 6 or None in trade_line or "None" in trade_line:
-            return None
-        
-        trade_dict = {
-            "name": self.scraper.clean_and_filter_name(person).strip(),
-            "ticker": trade_line[4].strip().upper(),
-            "stock_name": trade_line[2].strip(),
-            "transaction_type": trade_line[3].strip(),
-            "date_executed": self.scraper.make_date_format_consistent(trade_line[1].strip()),
-            "amount": trade_line[5].strip().replace("$","").replace(",","")
-        }
-        
-        for key in trade_dict:
-            if type(trade_dict[key]) != None and type(trade_dict[key]) == str and ":" in trade_dict[key]:
-                chumma = trade_dict[key].split(":")
-                print(chumma)
-                trade_dict[key] = chumma[-1].strip()
-        
-        return trade_dict
-
-    def unload_trade_line_dict(self,trade_dict : dict):
-        name = trade_dict.get("name")
-        ticker = trade_dict.get("ticker")
-        stock_name = trade_dict.get("stock_name")
-        transaction_type = trade_dict.get("transaction_type")
-        date_executed = trade_dict.get("date_executed")
-        amount = trade_dict.get("amount")
-        return name, ticker, stock_name, transaction_type, date_executed, amount
-    
-    def embed_trade_dict_line_to_database(self,trade_line_dict:dict,trade_database:dict) -> None:
-        name, ticker, stock_name, transaction_type, date_executed, amount = self.unload_trade_line_dict(trade_line_dict)
-        if self.database.detect_odd_database_entries(name, ticker, stock_name, transaction_type, date_executed, amount):
-            return trade_database
-        
-        print(trade_line_dict)
-        if name not in trade_database:
-            trade_database[name] = {}
-        if date_executed not in trade_database[name]:
-            trade_database[name][date_executed] = {}
-        if stock_name not in trade_database[name][date_executed]:
-            trade_database[name][date_executed][stock_name] = {
-                "ticker": ticker,
-                "transaction_type": transaction_type,
-                "amount": amount
-            }
-        return trade_database   
+        self.trader = Trader()
 
         
     def process_one_trade_pdf_into_database(self, pdf_suffix_path : str,person:str) -> None:
-        db = self.database.load_trade_database()
         self.scraper.download_trade_pdf(pdf_suffix_path=pdf_suffix_path)
         try:
             trade_processed_result = self.llm.process_text_dump_trade(text_dump=self.scraper.extract_trade_pdf_text())
@@ -78,10 +30,9 @@ class TradeLikePelosi:
                 trade_line = trade_lines[idx].strip().split(";")
                 if trade_line[-1].strip() == '':
                     del trade_line[-1]
-                trade_line_dict = self.load_trade_line(trade_line=trade_line,person=person)
+                trade_line_dict = self.database.load_trade_line(trade_line=trade_line,person=person)
                 if trade_line_dict:
-                    db = self.embed_trade_dict_line_to_database(trade_line_dict=trade_line_dict,trade_database=db)
-                    self.database.save_trade_database(db)
+                    self.database.write_trade_dict_line_to_database(trade_line_dict=trade_line_dict)
                 else:
                     print("Corrupted line trade detected: ")   
                     print(trade_line)
@@ -93,18 +44,14 @@ class TradeLikePelosi:
         if organized_pdf_trades == None:
             organized_pdf_trades = self.database.load_trades_pdf_politician_db_to_dict()
         trades_keys = self.database.load_trades_politician_keys_db_to_dict()
-        trigger = False
         for person, years_data in organized_pdf_trades.items():
-            if person == "steil bryan george":
-                trigger = True
-            if trigger:
-                for year, pdf_list in years_data.items():
-                    for pdf_suffix_path in pdf_list:
-                        print("Processing the following pdf trade: "+pdf_suffix_path)
-                        if pdf_suffix_path not in trades_keys or force_refresh:
-                            self.process_one_trade_pdf_into_database(pdf_suffix_path=pdf_suffix_path,person=person)
-                            trades_keys[pdf_suffix_path] = True
-                            self.database.save_trades_keys_politician_dict_to_db(trades_keys)
+            for year, pdf_list in years_data.items():
+                for pdf_suffix_path in pdf_list:
+                    print("Processing the following pdf trade: "+pdf_suffix_path)
+                    if pdf_suffix_path not in trades_keys or force_refresh:
+                        self.process_one_trade_pdf_into_database(pdf_suffix_path=pdf_suffix_path,person=person)
+                        trades_keys[pdf_suffix_path] = True
+                        self.database.save_trades_keys_politician_dict_to_db(trades_keys)
 
         
     def parse_through_trade_database(self) -> None:
@@ -122,7 +69,7 @@ class TradeLikePelosi:
                     print(transaction_type)
                     print(amount)
                     # This is extra just to play around filter and stuff post process
-                    # formatted_date_execution = self.make_date_format_consistent(date_execution)
+                    # formatted_date_execution = self.database.make_date_format_consistent(date_execution)
                     # print(formatted_date_execution)
 
                     # if formatted_date_execution == None:

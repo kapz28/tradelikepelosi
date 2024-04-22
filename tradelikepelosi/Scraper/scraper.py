@@ -3,7 +3,6 @@ from Scraper.scraperconfig import TARGET_DATA,TARGET_ENDPOINT, TARGET_HEADERS,  
 from Database.database import _Database
 import re
 import os
-from datetime import datetime
 
 class Scraper:
     def __init__(self, url=TARGET_ENDPOINT, headers=TARGET_HEADERS, data=TARGET_DATA, year=None):
@@ -80,14 +79,7 @@ class Scraper:
     def extract_trade_pdf_text(self):
         return _Database.load_trade_pdf()
     
-    def clean_and_filter_name(self,name):        
-        name = str(re.sub('[^a-zA-Z]+', ' ', name)).lower()
-        prefixes = ["hon","ms","mr","dr"]
-        for prefix in prefixes:
-            name = name.replace(prefix, " ") 
-        name = ' '.join(name.split())
-        name = ' '.join( [namesub for namesub in name.split() if len(namesub)>1] )
-        return name 
+
     
     def sift_parsed_pdf_trades_raw_data_and_update_higher_level_database(self, parsed_trades_raw_table_data):
         existing_pdf_files_keys_database = _Database.load_trades_pdf_keys_politician_db_to_dict()
@@ -95,7 +87,7 @@ class Scraper:
         
         for item in parsed_trades_raw_table_data:
             year = int(os.path.basename(os.path.dirname(item["file"])))
-            name = self.clean_and_filter_name(name=item["name"])
+            name = _Database.clean_and_filter_name(name=item["name"])
             file = item["file"]
             
             print(year)
@@ -114,52 +106,6 @@ class Scraper:
         _Database.save_trades_pdf_politician_dict_to_db(existing_organized_pdf_data_database)
 
         return existing_organized_pdf_data_database, existing_pdf_files_keys_database
-      
- 
-    def make_date_format_consistent(self,date_str:str) -> None:
-        date_str = date_str.strip()
-        date_str = date_str.replace("*","")
-        try:
-            date_obj = datetime.strptime(date_str, "%B %d, %Y")
-            return date_obj.strftime("%m/%d/%Y")
-        except ValueError:
-            try:
-                date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-                return date_obj.strftime("%m/%d/%Y")
-            except ValueError:
-                try:
-                    date_obj = datetime.strptime(date_str, "%m/%d/%Y")
-                    return date_obj.strftime("%m/%d/%Y")
-                except ValueError:
-                    try:
-                        date_obj = datetime.strptime(date_str, "%m-%d-%Y")
-                        return date_obj.strftime("%m/%d/%Y")
-                    except ValueError:
-                        try:
-                            date_obj = datetime.strptime(date_str, "%b %d,%Y")
-                            return date_obj.strftime("%m/%d/%Y")
-                        except ValueError:
-                            try:
-                                date_obj = datetime.strptime(date_str, "%b %d, %Y")
-                                return date_obj.strftime("%m/%d/%Y")
-                            except ValueError:
-                                try:
-                                    date_obj = datetime.strptime(date_str, "%B %d, %Y")
-                                    return date_obj.strftime("%m/%d/%Y")
-                                except ValueError:
-                                    try:
-                                        date_obj = datetime.strptime(date_str, "%m/%d/%y")
-                                        return date_obj.strftime("%m/%d/%Y")
-                                    except ValueError:
-                                        try:
-                                            temp = date_str.split(" ")
-                                            if len(temp) > 3:
-                                                temp = temp[:3]
-                                            temp = " ".join(temp)
-                                            date_obj = datetime.strptime(temp, "%b %d %Y")
-                                            return date_obj.strftime("%m/%d/%Y")
-                                        except ValueError:
-                                            return None
 
     
     

@@ -6,3 +6,4 @@ JSON_PDF_POLITCIAN_TRADES = "tradespdfpolitician.json"
 JSON_POLITCIAN_TRADES = "database.json"
 DATABASE = JSON_POLITCIAN_TRADES
 DATABASE_FOLDER_NAME = "Database"
+PERFORMANCE = "performance.json"
