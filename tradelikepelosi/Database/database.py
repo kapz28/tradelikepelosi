@@ -210,13 +210,14 @@ class _Database:
         
         
     @staticmethod
-    def create_performance_line_dict(politician:str,date:str,ticker:str,stock_official_name:str, time_series_dict: dict) -> dict:
+    def create_performance_line_dict(politician:str,date:str,ticker:str,stock_official_name:str, time_series_dict: dict, transaction_type:str) -> dict:
         performance_line_dict = {
             "politician": politician,
             "date": date,
             "ticker": ticker,
             "stock_official_name": stock_official_name,
-            "performance": time_series_dict
+            "performance": time_series_dict,
+            "transaction_type": transaction_type
         }
 
         return performance_line_dict
@@ -243,7 +244,8 @@ class _Database:
         trade_info = {
             "ticker":performance_line_dict['ticker'],
             "stock_official_name":performance_line_dict['stock_official_name'],
-            "performance":performance_line_dict['performance']
+            "performance":performance_line_dict['performance'],
+            "transaction_type":performance_line_dict['transaction_type']
         }   
         if performance_line_dict['date'] not in performance_database['politician']:
             performance_database[performance_line_dict['politician']][performance_line_dict['date']] = []

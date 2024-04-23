@@ -1,4 +1,5 @@
 from openai import OpenAI
+import re
 
 
 class ChatGPT:
@@ -59,3 +60,62 @@ class ChatGPT:
     
         # print(response.choices[0].message.content)
         return response.choices[0].message.content
+    
+    def get_stock_name_using_ticker_llm(self, ticker:str) -> str:
+        prompt = "can you get me the stock name associated with this ticker $" + ticker + " when you give me a response for the stock name only give me the stock name no other words nothing at all just the stock name don't say any other words, if you can't find it return None"
+        response = self.client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+            "role": "system",
+            "content": "You are a helpful assistant that can extract information about stocks such as prices and stock names"
+            },
+            {
+            "role": "user",
+            "content": prompt
+            },
+        ],
+        temperature=1,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+        )
+        try:
+            response = re.sub(r'[^a-zA-Z ]+',  '', str(response)).strip()
+            if response is not '' or response is not 'None':
+                return response
+            else:
+                return None
+        except:
+            return None
+    
+    # def get_price_by_ticker_and_date_llm(self, ticker:str, date:str) -> float:
+    #     prompt = "given this date " + date + " it's in the format of YYYY-MM-DD and this stock ticker $"+ ticker + " can you give me the price it opened at on that date." + " When you give me a response for the price only give me the price no other words nothing at all just the price with two decimal places don't say any other words or numbers, if you can't find it return None"
+    #     response = self.client.chat.completions.create(
+    #     model="gpt-3.5-turbo",
+    #     messages=[
+    #         {
+    #         "role": "system",
+    #         "content": "You are a helpful assistant that can extract information about stocks such as prices and stock names"
+    #         },
+    #         {
+    #         "role": "user",
+    #         "content": prompt
+    #         },
+    #     ],
+    #     temperature=1,
+    #     max_tokens=256,
+    #     top_p=1,
+    #     frequency_penalty=0,
+    #     presence_penalty=0
+    #     )
+    #     try:
+    #         response = re.sub('[^\d\.]', '', str(response)).strip()
+    #         if response is not '' or response is not 'None':
+    #             return round(float(response),2)
+    #         else:
+    #             return None
+
+    #     except:
+    #         return None

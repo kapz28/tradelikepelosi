@@ -2,6 +2,7 @@ from Database.database import _Database
 from LLM.llm import ChatGPT
 from Scraper.scraper import Scraper
 from Trader.trader import Trader
+from Markets.markets import _Markets
 
 from typing import List
 import copy
@@ -101,8 +102,13 @@ class TradeLikePelosi:
 
 
 if __name__ == "__main__":  # pragma: no cover
-    pelosi_bot = TradeLikePelosi()
-    pelosi_bot.pull_all_trades_and_update_trade_database()
+    # pelosi_bot = TradeLikePelosi()
+    #pelosi_bot.pull_all_trades_and_update_trade_database()
+    #print(_Markets.get_price_by_ticker_and_date("TSLA","2025-04-22"))
+    print(_Markets.get_stock_name_using_ticker("ajskdfhjkasdfk"))
+
+    # print(pelosi_bot.llm.get_price_by_ticker_and_date_llm("TSLA","2015-02-02"))
+    # pelosi_bot.trader.backtest_entire_database_and_save_performance()
     # pelosi_bot.pull_all_trades_and_update_database()
     # pelosi_bot.parse_through_database()
     # pelosi_bot.scraper.save_trades_raw()
